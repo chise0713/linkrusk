@@ -1,0 +1,40 @@
+name: Publish to GitHub Pages
+
+on:
+  push:
+    branches:
+      - master
+
+permissions:
+  contents: write
+
+jobs:
+  build-publish:
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v3
+    - uses: actions-rs/toolchain@v1.0.6
+      with:
+        toolchain: stable
+        profile: minimal
+        target: wasm32-unknown-unknown
+        override: true
+    - uses: Swatinem/rust-cache@v2
+    - uses: cargo-bins/cargo-binstall@main
+    - name: Install Dioxus-CLI
+      shell: bash
+      run: cargo binstall dioxus-cli
+
+    - name: Build Project
+      shell: bash
+      run: |
+        dx bundle --release --out-dir docs 
+        mv docs/public/* docs 
+        cp docs/index.html docs/404.html
+
+    - name: Deploy Project 🚀
+      uses: JamesIves/github-pages-deploy-action@v4.4.1
+      with:
+        branch: gh-pages
+        folder: docs
+        clean: false
