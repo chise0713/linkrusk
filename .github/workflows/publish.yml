@@ -23,7 +23,7 @@ jobs:
     - uses: cargo-bins/cargo-binstall@main
     - name: Install Dioxus-CLI
       shell: bash
-      run: cargo binstall dioxus-cli
+      run: cargo binstall dioxus-cli --force
 
     - name: Build Project
       shell: bash
