@@ -19,7 +19,7 @@ pub struct ListData {
 pub struct Link {
     pub short: Short,
     pub url: Option<Box<str>>,
-    pub expiration: Option<u64>,
+    pub expiration: Option<i64>,
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone, PartialEq)]

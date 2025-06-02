@@ -34,6 +34,10 @@ fn link_item_render(link: Link) -> Element {
         .url
         .clone()
         .unwrap_or_else(|| Box::from("Failed to display"));
+    let expiration = link
+        .expiration
+        .map(|e| DateTime::from_timestamp(e, 0).unwrap().to_string())
+        .unwrap_or(String::new());
     rsx! {
         div { class: "p-4",
             p { class: "mb-2 text-2xl", "Key: {key}" }
@@ -106,7 +110,7 @@ fn link_item_render(link: Link) -> Element {
                 input {
                     class: "border border-gray-300 pl-2 pr-2",
                     r#type: "datetime",
-                    placeholder: "YYYY-MM-DD HH:MM:SS +0000",
+                    placeholder: "{expiration}",
                     name: "expiration",
                 }
                 br {}

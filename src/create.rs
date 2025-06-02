@@ -100,6 +100,7 @@ pub fn Create() -> Element {
                     r#type: "checkbox",
                     name: "number",
                     cursor: "pointer",
+                    placeholder: "Number",
                     checked: true,
                 }
                 br {}
@@ -123,7 +124,7 @@ pub fn Create() -> Element {
                 input {
                     class: "border border-gray-300 pl-2 pr-2",
                     r#type: "datetime",
-                    placeholder: "YYYY-MM-DD HH:MM:SS +0000",
+                    placeholder: "1970-01-01 00:00:00 UTC",
                     name: "expiration",
                 }
                 br {}
@@ -132,6 +133,7 @@ pub fn Create() -> Element {
                     class: "border border-gray-300 pl-2 pr-2",
                     r#type: "text",
                     name: "expirationTtl",
+                    placeholder: "Expiration TTL",
                 }
                 br {}
                 span { class: "pl-5" }
