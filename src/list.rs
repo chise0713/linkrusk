@@ -35,7 +35,7 @@ fn LinkComponent(link: Link) -> Element {
     rsx! {
         div { class: "border-r border-b border-gray-300 p-4 hover:bg-gray-100",
             p { class: "mb-2", "Key: {key}" }
-            p { class: "mb-2", "To URL:
+            p { class: "mb-2 break-all", "To URL:
                 {url}" }
         }
     }

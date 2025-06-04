@@ -14,6 +14,7 @@ use crate::{
 };
 
 const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
+const FAVICON: Asset = asset!("/assets/favicon.svg");
 
 fn main() {
     dioxus::launch(App);
@@ -21,8 +22,9 @@ fn main() {
 
 #[component]
 fn App() -> Element {
-    let checked = use_resource(|| async { check_local_login_info().await });
+    let checked = use_resource(|| check_local_login_info());
     rsx! {
+        link { rel: "icon", href: FAVICON, r#type: "image/svg+xml" }
         document::Stylesheet { href: TAILWIND_CSS }
         if let Some(true) = checked() {
             Router::<Route> {}
