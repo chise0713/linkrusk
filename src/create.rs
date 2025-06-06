@@ -1,15 +1,20 @@
 use chrono::DateTime;
 use dioxus::prelude::*;
 
-use crate::utils::{self, CreateRequestBody};
+use crate::{
+    utils::{self, CreateRequestBody},
+    Route,
+};
 
 #[component]
 pub fn Create() -> Element {
     rsx! {
         div {
-            h1 { class: "text-3xl px-5", "Create a new link" }
+            div { class: "flex flex-col",
+                h1 { class: "text-3xl mx-auto", "Create a new link" }
+            }
             form {
-                class: "ml-12 mt-5",
+                class: "mt-5",
                 onsubmit: move |evt: FormEvent| async move {
                     let values = evt.values();
                     let url = values["url"].as_value().to_string().into_boxed_str();
@@ -73,74 +78,95 @@ pub fn Create() -> Element {
                         window
                             .alert_with_message(format!("Link created: {short}").as_str())
                             .unwrap();
-                        window.location().set_href(&format!("/link/{short}")).unwrap();
+                        use_navigator()
+                            .push(Route::LinkItem {
+                                link: short.into(),
+                            });
                     }
                 },
-                span { class: "pl-5 text-xl pr-25", "URL" }
-                input {
-                    class: "border border-gray-300 pl-2",
-                    r#type: "text",
-                    name: "url",
-                    placeholder: "URL",
-                    required: true,
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-18.5", "Length" }
-                input {
-                    class: "border border-gray-300 pl-2",
-                    r#type: "text",
-                    name: "length",
-                    placeholder: "Length",
-                    value: 6,
-                    required: true,
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-19", "Number" }
-                input {
-                    r#type: "checkbox",
-                    name: "number",
-                    cursor: "pointer",
-                    placeholder: "Number",
-                    checked: true,
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-21.25", "Capital" }
-                input {
-                    r#type: "checkbox",
-                    name: "capital",
-                    cursor: "pointer",
-                    checked: true,
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-12.75", "Lowercase" }
-                input {
-                    r#type: "checkbox",
-                    name: "lowercase",
-                    cursor: "pointer",
-                    checked: true,
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-11.25", "Expiration" }
-                input {
-                    class: "border border-gray-300 pl-2 pr-2",
-                    r#type: "datetime",
-                    placeholder: "1970-01-01 00:00:00 UTC",
-                    name: "expiration",
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-2.5", "ExpirationTTL" }
-                input {
-                    class: "border border-gray-300 pl-2 pr-2",
-                    r#type: "text",
-                    name: "expirationTtl",
-                    placeholder: "Expiration TTL",
-                }
-                br {}
-                span { class: "pl-5" }
-                button {
-                    class: "border border-gray-300 hover:bg-gray-200 px-2 text-2xl",
-                    cursor: "pointer",
-                    "Create"
+                div { class: "flex flex-col w-9/12 sm:w-2/3 mx-auto",
+                    div { class: "flex flex-col justify-end mx-auto",
+                        div { class: "grid sm:grid-cols-2",
+                            div { class: "text-xl", "URL" }
+                            div {
+                                input {
+                                    class: "border border-gray-300 px-2",
+                                    r#type: "text",
+                                    name: "url",
+                                    placeholder: "URL",
+                                    required: true,
+                                }
+                            }
+                            div { class: "text-xl", "Length" }
+                            div {
+                                input {
+                                    class: "border border-gray-300 px-2",
+                                    r#type: "text",
+                                    name: "length",
+                                    placeholder: "Length",
+                                    value: 6,
+                                    required: true,
+                                }
+                            }
+                        }
+                        div { class: "grid grid-cols-2",
+                            div { class: "text-xl", "Number" }
+                            div {
+                                input {
+                                    r#type: "checkbox",
+                                    name: "number",
+                                    cursor: "pointer",
+                                    placeholder: "Number",
+                                    checked: true,
+                                }
+                            }
+                            div { class: "text-xl", "Capital" }
+                            div {
+                                input {
+                                    r#type: "checkbox",
+                                    name: "capital",
+                                    cursor: "pointer",
+                                    checked: true,
+                                }
+                            }
+                            div { class: "text-xl", "Lowercase" }
+                            div {
+                                input {
+                                    r#type: "checkbox",
+                                    name: "lowercase",
+                                    cursor: "pointer",
+                                    checked: true,
+                                }
+                            }
+                        }
+                        div { class: "grid sm:grid-cols-2",
+                            div { class: "text-xl", "Expiration" }
+                            div {
+                                input {
+                                    class: "border border-gray-300 px-2",
+                                    r#type: "datetime",
+                                    placeholder: "1970-01-01 00:00:00 UTC",
+                                    name: "expiration",
+                                }
+                            }
+                            div { class: "text-xl", "ExpirationTTL" }
+                            div {
+                                input {
+                                    class: "border border-gray-300 px-2",
+                                    r#type: "text",
+                                    name: "expirationTtl",
+                                    placeholder: "Expiration TTL",
+                                }
+                            }
+                        }
+                    }
+                    div { class: "sm:mt-0 mt-1 mx-auto",
+                        button {
+                            class: "border border-gray-300 hover:bg-gray-200 px-2 text-2xl",
+                            cursor: "pointer",
+                            "Create"
+                        }
+                    }
                 }
             }
         }

@@ -3,7 +3,10 @@ use std::rc::Rc;
 use chrono::DateTime;
 use dioxus::prelude::*;
 
-use crate::utils::{self, Link};
+use crate::{
+    utils::{self, Link},
+    Route,
+};
 
 #[component]
 pub fn LinkItem(link: String) -> Element {
@@ -39,9 +42,12 @@ fn link_item_render(link: Link) -> Element {
         .map(|e| DateTime::from_timestamp(e, 0).unwrap().to_string())
         .unwrap_or(String::new());
     rsx! {
-        div { class: "p-4",
-            p { class: "mb-2 text-2xl", "Key: {key}" }
+        div { class: "",
+            div { class: "flex flex-col",
+                h1 { class: "text-3xl mx-auto", "Key: {key}" }
+            }
             form {
+                class: "mt-2",
                 onsubmit: {
                     let key = key.clone();
                     move |event: FormEvent| {
@@ -97,56 +103,77 @@ fn link_item_render(link: Link) -> Element {
                         }
                     }
                 },
-                span { class: "pl-5 text-xl pr-16.5", "To URL:" }
-                input {
-                    class: "w-10/12 border border-gray-300",
-                    r#type: "text",
-                    name: "url",
-                    value: "{url}",
-                }
-                span { class: "px-1" }
-                br {}
-                span { class: "pl-5 text-xl pr-11.25", "Expiration" }
-                input {
-                    class: "border border-gray-300 pl-2 pr-2",
-                    r#type: "datetime",
-                    placeholder: "{expiration}",
-                    name: "expiration",
-                }
-                br {}
-                span { class: "pl-5 text-xl pr-2.5", "ExpirationTTL" }
-                input {
-                    class: "border border-gray-300 pl-2 pr-2",
-                    r#type: "text",
-                    name: "expirationTtl",
-                }
-                br {}
-                span { class: "pl-5 " }
-                button {
-                    class: "border border-gray-300 hover:bg-gray-200 px-2 text-2xl",
-                    cursor: "pointer",
-                    "Update"
-                }
-            }
-            br {}
-            span { class: "pl-5" }
-            button {
-                class: "border border-gray-300 hover:bg-gray-200 px-2 text-red-500",
-                cursor: "pointer",
-                onclick: {
-                    let key = key.clone();
-                    move |_| {
-                        let key = key.clone();
-                        async move {
-                            if utils::delete_link(key.as_ref()).await {
-                                let window = web_sys::window().unwrap();
-                                window.alert_with_message("Link deleted").unwrap();
-                                window.location().set_href("/").unwrap();
+                div { class: "flex flex-col w-9/12 sm:w-2/3 mx-auto",
+                    div { class: "flex flex-col justify-end mx-auto",
+                        div { class: "grid sm:grid-cols-2",
+                            span { class: "text-xl", "To URL:" }
+                            div {
+                                textarea {
+                                    class: "border border-gray-300 px-2 break-all",
+                                    rows: 4,
+                                    resize: "none",
+                                    name: "url",
+                                    value: "{url}",
+                                }
+                            }
+                            span { class: "text-xl", "Expiration" }
+                            div {
+                                input {
+                                    class: "border border-gray-300 px-2",
+                                    r#type: "datetime",
+                                    placeholder: "{expiration}",
+                                    name: "expiration",
+                                }
+                            }
+                            span { class: "text-xl", "ExpirationTTL" }
+                            div {
+                                input {
+                                    class: "border border-gray-300 px-2",
+                                    r#type: "text",
+                                    name: "expirationTtl",
+                                }
+                            }
+                        }
+                        div { class: "grid sm:grid-cols-2",
+                            div { class: "mt-1 sm:mt-0",
+                                button {
+                                    r#type: "submit",
+                                    class: "border border-gray-300 hover:bg-gray-200 px-2 text-2xl",
+                                    cursor: "pointer",
+                                    "Update"
+                                }
+                            }
+                            div { class: "mt-1 sm:mt-0",
+                                button {
+                                    r#type: "button",
+                                    class: "border border-gray-300 hover:bg-gray-200 px-2 text-2xl  text-red-500",
+                                    cursor: "pointer",
+                                    onclick: {
+                                        let key = key.clone();
+                                        move |_| {
+                                            let key = key.clone();
+                                            async move {
+                                                if !web_sys::window()
+                                                    .unwrap()
+                                                    .confirm_with_message("Are you sure you want to delete this link?")
+                                                    .unwrap()
+                                                {
+                                                    return;
+                                                }
+                                                if utils::delete_link(key.as_ref()).await {
+                                                    let window = web_sys::window().unwrap();
+                                                    window.alert_with_message("Link deleted").unwrap();
+                                                    use_navigator().replace(Route::Home);
+                                                }
+                                            }
+                                        }
+                                    },
+                                    "Delete This Link"
+                                }
                             }
                         }
                     }
-                },
-                "Delete This Link"
+                }
             }
         }
     }

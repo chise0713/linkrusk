@@ -59,9 +59,12 @@ pub fn NavBar() -> Element {
             div { class: "flex items-stretch h-7 hover:bg-gray-200",
                 span { class: "w-px bg-gray-300 mr-2" }
                 Link {
-                    to: "/",
+                    to: Route::Home,
                     onclick: |_| {
                         let window = web_sys::window().unwrap();
+                        if !window.confirm_with_message("Are you sure you want to logout?").unwrap() {
+                            return;
+                        }
                         window.local_storage().unwrap().unwrap().clear().unwrap();
                         window.location().reload().unwrap();
                     },
@@ -100,8 +103,11 @@ fn SideBar() -> Element {
 #[component]
 pub fn Home() -> Element {
     rsx! {
-        div {
-            h1 { class: "text-3xl px-5", "Welcome to linkrusk!" }
+        div { class: "flex items-center justify-center",
+            p { class: "flex items-center text-4xl",
+                img { class: "icon-inline h-12 w-12", src: FAVICON }
+                "Welcome to linkrusk!"
+            }
         }
     }
 }
