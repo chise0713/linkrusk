@@ -8,13 +8,15 @@ edition = "2021"
 [dependencies]
 chrono = { version = "0.4.41", default-features = false }
 dioxus = { version = "0.6.0", features = ["router"] }
-reqwest = { version = "0.12.18", features = ["json"] }
-serde = { version = "1.0.219", features = ["derive"] }
-serde_json = "1.0.140"
+reqwest = { version = "0.12.18", default-features = false, features = ["json"] }
+serde = { version = "1.0.219", default-features = false, features = ["derive"] }
 serde_with = { version = "3.12.0", default-features = false, features = [
     "macros",
 ] }
-web-sys = { version = "0.3.77", features = ["Window", "Storage"] }
+web-sys = { version = "0.3.77", default-features = false, features = [
+    "Window",
+    "Storage",
+] }
 
 
 [features]
@@ -33,3 +35,11 @@ inherits = "dev"
 
 [profile.android-dev]
 inherits = "dev"
+
+# https://github.com/johnthagen/min-sized-rust/blob/f1db29c8cf2be1eaba1ee813cfd147a263853614/Cargo.toml#L9-L14
+[profile.release]
+opt-level = "z"   # Optimize for size.
+lto = true        # Enable Link Time Optimization
+codegen-units = 1 # Reduce number of codegen units to increase optimizations.
+panic = "abort"   # Abort on panic
+strip = true      # Automatically strip symbols from the binary.

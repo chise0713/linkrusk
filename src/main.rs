@@ -17,7 +17,7 @@ const TAILWIND_CSS: Asset = asset!("/assets/tailwind.css");
 const FAVICON: Asset = asset!("/assets/favicon.svg");
 
 fn main() {
-    dioxus::launch(App);
+    launch(App);
 }
 
 #[component]
