@@ -4,10 +4,11 @@ use crate::utils::{self, Link};
 
 #[component]
 pub fn List() -> Element {
+    #[allow(clippy::redundant_closure)]
     let links = use_resource(|| utils::fetch_links());
     rsx! {
         match links() {
-            Some(links) => render_links(links),
+            Some(links) => render_links(links.as_ref()),
             None => rsx! {
                 div { class: "mb-2 text-2xl", "Loading..." }
             },
@@ -15,7 +16,7 @@ pub fn List() -> Element {
     }
 }
 
-fn render_links(links: Box<[Link]>) -> Element {
+fn render_links(links: &[Link]) -> Element {
     rsx! {
         for link in links.iter() {
             Link { to: format!("/link/{}", link.short.key),

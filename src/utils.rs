@@ -66,7 +66,7 @@ fn get_login_info() -> Option<(Box<str>, Box<str>)> {
             window
                 .alert_with_message("Failed to fetch the backend URL. Please login again.")
                 .unwrap();
-            window.location().set_href("/").unwrap();
+            window.location().reload().unwrap();
             return None;
         }
     };
@@ -77,7 +77,7 @@ fn get_login_info() -> Option<(Box<str>, Box<str>)> {
             window
                 .alert_with_message("Failed to fetch the token. Please login again.")
                 .unwrap();
-            window.location().set_href("/").unwrap();
+            window.location().reload().unwrap();
             return None;
         }
     };
@@ -94,10 +94,10 @@ pub async fn fetch_links() -> Box<[Link]> {
     let mut cursor: Option<Box<str>> = None;
     loop {
         let req = reqwest::Client::new()
-            .get(&format!("{}/api/v1/list", url))
+            .get(format!("{}/api/v1/list", url))
             .bearer_auth(&token);
-        let req = if cursor.is_some() {
-            req.query(&[("c", cursor.unwrap().as_ref())])
+        let req = if let Some(cursor) = cursor {
+            req.query(&[("c", cursor.as_ref())])
         } else {
             req
         };
@@ -118,11 +118,11 @@ pub async fn fetch_links() -> Box<[Link]> {
                             .as_str(),
                     )
                     .unwrap();
-                return Box::from([]);
+                return null_link;
             }
         }
     }
-    return links.into_boxed_slice();
+    links.into_boxed_slice()
 }
 
 pub async fn update_link(body: UpdateRequestBody) -> bool {
@@ -131,7 +131,7 @@ pub async fn update_link(body: UpdateRequestBody) -> bool {
         None => return false,
     };
     match reqwest::Client::new()
-        .put(&format!("{}/api/v1/update", url))
+        .put(format!("{}/api/v1/update", url))
         .bearer_auth(&token)
         .json(&body)
         .send()
@@ -148,7 +148,7 @@ pub async fn update_link(body: UpdateRequestBody) -> bool {
                     .unwrap();
                 return false;
             }
-            return true;
+            true
         }
         Err(e) => {
             web_sys::window()
@@ -161,9 +161,9 @@ pub async fn update_link(body: UpdateRequestBody) -> bool {
                     .as_str(),
                 )
                 .unwrap();
-            return false;
+            false
         }
-    };
+    }
 }
 
 pub async fn delete_link(short: &str) -> bool {
@@ -172,7 +172,7 @@ pub async fn delete_link(short: &str) -> bool {
         None => return false,
     };
     match reqwest::Client::new()
-        .delete(&format!("{}/api/v1/delete", url))
+        .delete(format!("{}/api/v1/delete", url))
         .body(format!(r#"{{"short": "{}"}}"#, short))
         .bearer_auth(&token)
         .send()
@@ -189,7 +189,7 @@ pub async fn delete_link(short: &str) -> bool {
                     .unwrap();
                 return false;
             }
-            return true;
+            true
         }
         Err(e) => {
             web_sys::window()
@@ -202,9 +202,9 @@ pub async fn delete_link(short: &str) -> bool {
                     .as_str(),
                 )
                 .unwrap();
-            return false;
+            false
         }
-    };
+    }
 }
 
 pub async fn create_link(req: CreateRequestBody) -> Box<str> {
@@ -214,7 +214,7 @@ pub async fn create_link(req: CreateRequestBody) -> Box<str> {
         None => return null_response,
     };
     match reqwest::Client::new()
-        .post(&format!("{}/api/v1/create", url))
+        .post(format!("{}/api/v1/create", url))
         .bearer_auth(&token)
         .json(&req)
         .send()
@@ -223,7 +223,7 @@ pub async fn create_link(req: CreateRequestBody) -> Box<str> {
         Ok(response) => {
             if response.status().is_success() {
                 let response: Response<CreateData> = response.json().await.unwrap();
-                return response
+                response
                     .data
                     .unwrap()
                     .short
@@ -232,7 +232,7 @@ pub async fn create_link(req: CreateRequestBody) -> Box<str> {
                         url.trim_start_matches("http://")
                             .trim_start_matches("https://"),
                     ))
-                    .into();
+                    .into()
             } else {
                 web_sys::window()
                     .unwrap()
@@ -241,7 +241,7 @@ pub async fn create_link(req: CreateRequestBody) -> Box<str> {
                         response.json::<Response<CreateData>>().await.unwrap().msg
                     ))
                     .unwrap();
-                return null_response;
+                null_response
             }
         }
         Err(e) => {
@@ -255,7 +255,7 @@ pub async fn create_link(req: CreateRequestBody) -> Box<str> {
                     .as_str(),
                 )
                 .unwrap();
-            return null_response;
+            null_response
         }
-    };
+    }
 }

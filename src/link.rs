@@ -10,11 +10,12 @@ use crate::{
 
 #[component]
 pub fn LinkItem(link: String) -> Element {
+    #[allow(clippy::redundant_closure)]
     let links = use_resource(|| utils::fetch_links());
     rsx! {
         match links() {
             Some(links) => {
-                let link = links.iter().find(|l| l.short.key.as_ref() == &link).cloned();
+                let link = links.iter().find(|l| l.short.key.as_ref() == link).cloned();
                 if let Some(link) = link {
                     link_item_render(link)
                 } else {
@@ -40,7 +41,7 @@ fn link_item_render(link: Link) -> Element {
     let expiration = link
         .expiration
         .map(|e| DateTime::from_timestamp(e, 0).unwrap().to_string())
-        .unwrap_or(String::new());
+        .unwrap_or_default();
     rsx! {
         div { class: "",
             div { class: "flex flex-col",

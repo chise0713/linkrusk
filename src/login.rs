@@ -51,7 +51,7 @@ pub async fn check_local_login_info() -> bool {
     if url.is_none() || token.is_none() {
         return false;
     }
-    return check_login_info(url.unwrap(), token.unwrap()).await;
+    check_login_info(url.unwrap(), token.unwrap()).await
 }
 
 async fn login_handler(url: impl Into<Rc<str>>, token: impl Into<Rc<str>>) {
@@ -75,12 +75,10 @@ async fn login_handler(url: impl Into<Rc<str>>, token: impl Into<Rc<str>>) {
         window
             .alert_with_message("Invalid login information. Please try again.")
             .unwrap();
-        return;
     } else {
         store_login_info(url, token.as_ref());
         window.alert_with_message("Login successful!").unwrap();
         window.location().reload().unwrap();
-        return;
     }
 }
 
@@ -88,17 +86,11 @@ async fn check_login_info(url: impl Into<Box<str>>, token: impl Into<Box<str>>) 
     let url: Box<str> = url.into();
     let token: Box<str> = token.into();
     reqwest::Client::new()
-        .get(&format!("{}/api/v1/list", url))
+        .get(format!("{}/api/v1/list", url))
         .bearer_auth(token)
         .send()
         .await
-        .map(|r| {
-            if r.status() == reqwest::StatusCode::OK {
-                true
-            } else {
-                false
-            }
-        })
+        .map(|r| r.status() == reqwest::StatusCode::OK)
         .unwrap_or(false)
 }
 

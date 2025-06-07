@@ -22,6 +22,7 @@ fn main() {
 
 #[component]
 fn App() -> Element {
+    #[allow(clippy::redundant_closure)]
     let checked = use_resource(|| check_local_login_info());
     rsx! {
         link { rel: "icon", href: FAVICON, r#type: "image/svg+xml" }
