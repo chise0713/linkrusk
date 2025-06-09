@@ -34,7 +34,7 @@ pub struct Short {
 #[derive(Deserialize, Serialize, Debug)]
 pub struct CreateRequestBody {
     pub url: Box<str>,
-    pub length: Option<Box<str>>,
+    pub length: Option<u16>,
     pub number: Option<bool>,
     pub capital: Option<bool>,
     pub lowercase: Option<bool>,

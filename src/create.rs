@@ -18,14 +18,19 @@ pub fn Create() -> Element {
                 onsubmit: move |evt: FormEvent| async move {
                     let values = evt.values();
                     let url = values["url"].as_value().to_string().into_boxed_str();
-                    let length = match values["length"].as_value().parse() {
-                        Ok(l) => l,
-                        Err(e) => {
-                            let window = web_sys::window().unwrap();
-                            window
-                                .alert_with_message(format!("Invalid length {}", e).as_str())
-                                .unwrap();
-                            0
+                    let length = values["length"].as_value();
+                    let length = if length.is_empty() {
+                        None
+                    } else {
+                        match length.parse::<u16>() {
+                            Ok(l) => Some(l),
+                            Err(e) => {
+                                let window = web_sys::window().unwrap();
+                                window
+                                    .alert_with_message(format!("Invalid length {}", e).as_str())
+                                    .unwrap();
+                                return;
+                            }
                         }
                     };
                     let number = values["number"].as_value().parse::<bool>().ok();
@@ -65,7 +70,7 @@ pub fn Create() -> Element {
                     };
                     let body = CreateRequestBody {
                         url,
-                        length: Some(length.to_string().into_boxed_str()),
+                        length,
                         number,
                         capital,
                         lowercase,
